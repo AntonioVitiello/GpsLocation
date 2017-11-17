@@ -1,0 +1,21 @@
+https://github.com/login
+
+antvit69@gmail.com  antvit69 123stella
+vitiello.antonio@gmail.com vitiello.antonio@gmail.com 123stella
+
+
+# Setting user name and commit email for a single repository
+git config user.name "vitiello.antonio@gmail.com"
+git config user.email "vitiello.antonio@gmail.com"
+
+# Setting user name and commit email for every repository on your computer
+git config --global user.name "vitiello.antonio@gmail.com"
+git config --global user.email "vitiello.antonio@gmail.com"
+
+# Verify
+git config user.name
+git config user.email
+git config --global user.name
+git config --global user.email
+
+ssh-keygen -i -f yourname.pub > yourname_openssh.pub
