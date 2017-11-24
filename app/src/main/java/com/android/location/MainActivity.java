@@ -3,6 +3,7 @@ package com.android.location;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         checkPermission();
-
     }
 
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -52,36 +53,36 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
      * Check Permissions for ACCESS_FINE_LOCATION, SEND_SMS,...
      **/
     private void checkPermission() {
-        String[] permissionsReq = new String[1];
-
-        int hasLocationPermission = checkSelfPermission( Manifest.permission.ACCESS_FINE_LOCATION );
-        if( hasLocationPermission != PackageManager.PERMISSION_GRANTED ) {
-            permissionsReq[0] = Manifest.permission.ACCESS_FINE_LOCATION ;
-            showMessage("Need location permission");
-            Log.d(LOG_TAG, "checkPermission: need location permission");
+        List<String> permissionsReq = new ArrayList();
+        int hasLocationPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if(hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+            permissionsReq.add(Manifest.permission.ACCESS_FINE_LOCATION );
+            Log.d(LOG_TAG, "checkPermission: Location Permission Denied!");
         }
 /*
-        int hasSMSPermission = checkSelfPermission( Manifest.permission.SEND_SMS );
-        if( hasSMSPermission != PackageManager.PERMISSION_GRANTED ) {
-            permissionsReq[1] = Manifest.permission.SEND_SMS );
-            showMessage("Need send sms permission");
+        int hasSMSPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
+        if(hasSMSPermission != PackageManager.PERMISSION_GRANTED) {
+            permissionsReq.add(Manifest.permission.SEND_SMS);
             Log.d(LOG_TAG, "checkPermission: need send sms permission");
         }
         ... more permissions request
 */
-        if( permissionsReq.length > 0 ) {
+        if(permissionsReq.isEmpty()) { // Permission already granted, no runtime permissions needed!
+            Log.d(LOG_TAG, "checkPermission: Location permission already granted, current SDK API Level = " + Build.VERSION.SDK_INT);
+        } else {
             // Ask user for the permissions if we're on SDK M or later...
             // will be called onRequestPermissionsResult for responses
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ActivityCompat.requestPermissions(this, permissionsReq, REQUEST_CODE_ASK_PERMISSIONS);
+                ActivityCompat.requestPermissions(this,
+                        permissionsReq.toArray(new String[permissionsReq.size()]),
+                        REQUEST_CODE_ASK_PERMISSIONS);
+                Log.d(LOG_TAG, "checkPermission: Ask user for Location Permission");
             }
-        } else { // Permission already granted, no runtime permissions needed!
-            showMessage("Location permission granted");
         }
     }
 
     /**
-     * Callback received when a permissions request has been completed.
+     * Callback received when a permissions request has been completed, only on SDK M or later...
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -122,21 +123,36 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         // check for ACCESS_FINE_LOCATION permission - Called before onResume
         int checkPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        Log.d(LOG_TAG, "requestLocationUpdates: permission granted = " + (PackageManager.PERMISSION_GRANTED == checkPermission));
-
         if (checkPermission == PackageManager.PERMISSION_GRANTED) {
+            Log.d(LOG_TAG, "requestLocationUpdates: permission granted");
             for (String provider : providers) {
                 if (locationManager.isProviderEnabled(provider)) {
                     locationManager.requestLocationUpdates(provider, 0, 0, this);
+//                    locationManager.requestLocationUpdates(0, 0, createFineCriteria(), this, Looper.getMainLooper());
                     providerEnabled = true;
+                    showMessage("Please switch GPS on");
+                    Log.d(LOG_TAG, "requestLocationUpdates: active provider = " + provider);
                 }
             }
             if (!providerEnabled) {
                 Log.d(LOG_TAG, "requestLocationUpdates: No location providers enabled.");
             }
         } else {
-            Log.d(LOG_TAG, "requestLocationUpdates: Need location permission to start...");
+            showMessage("Need location permission to start tracking...");
+            Log.d(LOG_TAG, "requestLocationUpdates: Location Permission Denied.");
         }
+    }
+
+    /** this criteria needs high accuracy, high power, and cost */
+    public static Criteria createFineCriteria() {
+        Criteria c = new Criteria();
+        c.setAccuracy(Criteria.ACCURACY_FINE);
+        c.setAltitudeRequired(true);
+        c.setBearingRequired(false);
+        c.setSpeedRequired(false);
+        c.setCostAllowed(true);
+        c.setPowerRequirement(Criteria.POWER_HIGH);
+        return c;
     }
 
     @Override
@@ -151,35 +167,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         locations.add(location);
 
         String message = String.format(Locale.getDefault(),
-                "Total location updates: %d.\n\nYou are now at: %.2f, %.2f",
+                "Total location updates: %d.\n\nYou are now at: %.2f, %.2f, altitude: %.2f",
                 locations.size(),
                 location.getLatitude(),
-                location.getLongitude());
-        findMainFragment().showMessage(message);
+                location.getLongitude(),
+                location.getAltitude());
+        showMessage(message);
     }
 
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location){
+        // count and show this new location
         locationUpdated(location);
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        // Don't care
+//        Log.d(LOG_TAG, "onStatusChanged: provider = " + provider + ", status = " + status);
     }
 
     public void onProviderEnabled(String provider) {
-        // Don't care
+        Log.d(LOG_TAG, "onProviderEnabled: provider = " + provider);
     }
 
     public void onProviderDisabled(String provider) {
-        // Don't care
+        Log.d(LOG_TAG, "onProviderDisabled: provider = " + provider);
     }
 
     private void showMessage(String msg){
-        findMainFragment().showMessage(msg);
-        Log.d(LOG_TAG, "showMessage: " + msg);
+        MainActivityFragment fragment = (MainActivityFragment)getSupportFragmentManager().findFragmentById(R.id.fragment);
+        fragment.showMessage(msg);
     }
 
-    private MainActivityFragment findMainFragment() {
-        return (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-    }
 }

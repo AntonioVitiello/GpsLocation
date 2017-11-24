@@ -44,16 +44,25 @@
       <sourceFolder url="file://C:/Android/projectsBuild/GpsLocation/app/generated/source/apt/test/debug" isTestSource="true" generated="true" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/assets" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/blame" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/build-info" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/builds" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/check-manifest" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/classes" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/incremental" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/incremental-classes" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/incremental-runtime-classes" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/incremental-verifier" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/instant-run-resources" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/instant-run-support" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/javaPrecompile" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/jniLibs" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/manifests" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/prebuild" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/reload-dex" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/res" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/rs" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/shaders" />
+      <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/split-apk" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/splits-support" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/symbols" />
       <excludeFolder url="file://C:/Android/projectsBuild/GpsLocation/app/intermediates/tmp" />
